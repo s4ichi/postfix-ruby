@@ -80,6 +80,7 @@ module PostFix
     def exec
       raise 'Not enough numbers to exec' if stack.empty?
       command = stack.pop
+      raise 'Not a command' unless command?(command)
       self.instance_eval(&command)
     end
   end
@@ -92,7 +93,8 @@ module PostFix
     end
 
     def eval(argv, &body)
-      @stack = argv
+      @stack = argv.reverse
+
       instance_eval(&body)
 
       raise 'Stack is empty' if stack.empty?
@@ -107,6 +109,10 @@ module PostFix
 
     def number?(v)
       v.is_a?(Integer)
+    end
+
+    def command?(c)
+      c.is_a?(Proc)
     end
   end
 end
